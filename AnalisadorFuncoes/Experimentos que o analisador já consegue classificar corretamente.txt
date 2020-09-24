@@ -1,0 +1,104 @@
+Experimentos que o analisador já consegue classificar corretamente:
+    3-TINY-GSGP: A única função que ainda não é classificada corretamente é a 
+                 memoize(f) que não funciona com o IntPy, apesar de não ser 
+                 um método
+    
+    20-Resistance: Todas as funções não determinísticas são classificadas corretamente
+    
+    1-CruzDB-lamina: Todas as funções são classificadas corretamente
+
+    5-Diversity-Simulation: Todas as funções são classificadas corretamente
+
+    14-Motus: Descartado
+
+    16-gFlex: Todas as funções não determinísticas são classificadas corretamente.
+              Entretanto, na função "main()" do arquivo "gflex/gflex.py" utiliza-se
+              o "sys.argv" que o analisador ainda não é capaz de detectar
+
+    17-18-19-EPR: Todas as funções são classificadas corretamente. A única função ainda
+                  que ainda não é classificada corretamente é a função
+                  "def analyse(spin=PARTICLE_SPIN)" do arquivo "analyse.py" pois ainda
+                  não está implementada no AnalisadorFuncoes.py a detecção de variáveis
+                  como valores default, nos argumentos das funções. O que torna as funções
+                  não determinísticas.
+                  
+    25-QHO: Todas as funções são classificadas corretamente
+
+    6-Twitter-NLP: Todas as funções não determinísticas são classificadas corretamente
+
+    15-RiboDiff: Arquivo "adjdisp.py":
+                        A função "def adj_loglikelihood_shrink_scalar_onedisper(disp, explanatory, response, yhat, dispFitted, varPrior, sign):"
+                        foi classificada como determinística. O analisador está classificando-a como duvidosa porque ela chama uma função que
+                        está declarada em outro arquivo. Logo, a classificação do analisador está correta
+
+                        A função "def disper_adj(data, opts):" chama a função "statsmodels.api.GLM()"
+                        Como o nome dessa função começa com letra maiúscula o IntPy assume que essa
+                        função seja um construtor. Não consegui entender, lendo a documentação se ela
+                        é um construtor ou não.
+                        Nessa mesma função são utilizadas outras duas funções "scipy.optimize.minimize()"
+                        e "scipy.optimize.minimize_scalar()". Não classifiquei elas no IntPy porque não 
+                        compreendi corretamente o funcionamento delas. Elas parecem ser bem específicas
+                        
+                        A função "def disper_adj_scalar(data, opts):" chama a função "statsmodels.api.GLM()"
+                        Como o nome dessa função começa com letra maiúscula o IntPy assume que essa
+                        função seja um construtor. Não consegui entender, lendo a documentação se ela
+                        é um construtor ou não.
+                        Essa função também chama a função "scipy.optimize.minimize_scalar()". Não classifiquei
+                        ela no IntPy porque não compreendi corretamente o funcionamento dela. Ela parece ser 
+                        bem específicas.
+
+                 Arquivo "fitdisp.py": Na função "def do_fitting(data, obj):" chama-se a função numpy.percentile()
+                        e a função statsmodels.api.GLM() que não foram classificadas porque a documentação é um pouco
+                        específica
+
+
+FUNÇÕES PRESENTES NOS EXPERIMENTOS MAS QUE DECIDIMOS NÃO AVALIAR POIS PARECERAM COMPLEXAS AS DOCUMENTAÇÕES
+                        numpy.errstate()
+                        statsmodels.api.families.NegativeBinomial(alpha=disp)
+                        matplotlib.pyplot.yticks(np.arange(lowerEndTick, upperEndTick+1, 2))
+                        scipy.stats.chi2.cdf
+                        statsmodels.sandbox.stats.multicomp.multipletests
+
+
+                  Arquivo "rawdisp.py": a função statsmodels.api.families.NegativeBinomial(alpha=disp) não está sendo reconhecida
+                         como uma função que não pertence ao banco do analisador porque o import feito em geral é statsmodels.api
+                         e temos dois nomes a menos na chamada da função e não apenas um
+
+
+
+                  Arquivo "testcnt.py": As funções "scipy.stats.chi2.cdf" e "statsmodels.api.families.NegativeBinomial(alpha=disp)"
+                                        não são reconhecidas pelo intpy como funções não conhecidas porque os import diferem delas
+                                        por mais de uma palavra
+
+       
+       
+       26-Menger-Sponge-Slice: Todas as funções funcionando corretamente
+
+       30-Neural-Network: Descartado
+
+       2-DamID-Replication: Problemas de execução
+       
+       8-9-sciphy: Problemas de execução
+
+       10-Inmembrane-surfg: Arquivo "inmembrane/helpers.py":
+                                   A função "def generate_safe_seqids(proteins)" utiliza a função "re.syb()"
+                                   ainda não a incluí no banco do analisador de funções
+                            
+                            Arquivo "inmembrane/plugins/bomp_web.py":
+                                   A função def annotate(params, proteins, url="http://services.cbu.uib.no/tools/bomp/", force=False)"
+                                   utiliza funções do módulo twill e twill.commands que não foram registradas no analisador.
+                                   Essa função também utiliza em seu processamento atributos do módulo importado
+
+                            Arquivo "inmembrane/plugins/lipop_scrape_web.py":
+                                   A função "def annotate(params, proteins, batchsize=2000, force=False)" utiliza em seu processamento
+                                   atributos do módulo "requests" e "inmembrane"
+
+                                   As funções "requests.post()" e "requests.get()" não foram classificadas no analisador porque exigem
+                                   conhecimento do protocolo HTTP
+
+
+       7-OASIS: Problemas de execução
+
+       13
+
+       4

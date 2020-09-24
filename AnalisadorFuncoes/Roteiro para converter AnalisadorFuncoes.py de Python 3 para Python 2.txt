@@ -1,0 +1,15 @@
+Roteiro para converter AnalisadorFuncoes.py de Python 3 para Python 2
+1) Trocar as ocorrências (de cópia de listas) .copy() para [:]
+2) Tirar acentuações das frases que serão escritas nos arquivos de saída
+3) Trocar o comando input(...) por str(raw_input(...))
+4) Trocar ast.Constant(value=... kind=) por ast.Str(s=...)
+5) Apagar parte da função "funcoesNDNativasPython(self, callNode)" referente
+   ao comando "print" e adicionar a função abaixo:
+
+   #Indentificando funções que utilizam o comando "print()"
+    def visit_Print(self, node):
+        self.funcoesND[self.funcaoAtual] = "Essa funcao chama a funcao print() que nao e deterministica"
+        self.generic_visit(node)
+
+6) Testar para ver se a função AnalisadorFuncoes.py está funcionando para Python 2
+   e se o(s) arquivo(s) de saída gerado(s) também funciona(m)

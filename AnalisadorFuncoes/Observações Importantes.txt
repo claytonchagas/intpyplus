@@ -1,0 +1,115 @@
+############################ANOTAÇÕES GERAIS##################################
+Analisar possível melhoria se os vértices do grafo de funções fossem objetos Função
+
+ESTUDAR OUTROS TIPOS DE FUNÇÕES(Yield, lambda), utilização de assertivas e de comandos "raise"
+e "continue". Estudar utilização de decoradores em funções(O único decorador previsto atualmente
+é o @staticmethod)
+
+Analisar principais módulos que são utilizados e classificar suas funções como determinísticas ou não
+
+ANALISE DOS METODOS DAS CLASSES NÃO PREVÊ HERANÇA SIMPLES NEM MÚLTIPLA
+
+ANALISAR POSSIBILIDADE DE FAZER COM QUE NO GRUPO DE ARQUIVOS PASSADOS SE UMA FUNÇÃO NÃO FOR DETERMINÍSTICA
+PORQUE CHAMA OUTRA FUNÇÃO EXTERNA. SE DENTRE OS ARQUIVOS PASSADOS ESTIVER ESSA FUNÇÃO EXTERNA, A CLASSIFICAÇÃO
+DELA AUTOMATICAMENTE ATUALIZE A CLASSIFICAÇÃO DA FUNÇÃO QUE A CHAMA
+
+ANALISAR SE A FUNÇÃO RE.SUB() É DETERMINÍSTICA OU NÃO
+
+
+
+
+A versão mais nova do python é a 3.7.7 devido à compatibilidade com o módulo astor
+
+Código do IntPy utiliza a função time.clock mas ela foi removida no python 3.8
+https://www.geeksforgeeks.org/python-time-clock-method/
+
+Para que a função seja compatível com o IntPy, ao ser chamada, deve-se passar
+ao menos um parâmetro e, ao término do processamento, deve-se retornar algum
+valor que seja diferente de None
+
+Algumas limitações encontradas no IntPy:
+    1)As tuplas podem ser passadas como parâmetros e retornadas por funções.
+    2)As listas e dicionários podem ser passados como parâmetros/retornados para/por
+    funções. Todavia, no caso de serem passados como parâmetros, não é possível alterar
+    seus elementos dentro da função pois, o IntPy resultará em erro.
+    3)O retorno de uma função não pode ser uma chamada para outra função. Caso seja, o 
+    IntPy resultará em erro.
+    4)Objetos não podem ser passados como parâmetros para funções. Contudo, é possível retornar objetos instanciados dentro de uma função desde que o objeto retornado não tenha chamado nenhum método não determinístico dentro da função.
+    5)Classes e funções não podem ser passados por parâmetro para funções nem assinaturas desses elementos, definidas dentro de funções, podem ser retornadas por elas.
+
+#################################PREMISSAS####################################
+No arquivo não pode haver funções marcadas com @deterministic nem importação
+ao módulo do IntPy
+
+Só estamos considerando os casos em que o import é feito com "import ..."
+
+Todos os métodos de classes devem ser implementados com o marcador "@staticmethod"
+
+Todas as chamadas a métodos de uma classe (estáticos) devem ser feitas através do
+nome da classe, jamais pelo nome da instância.
+
+Este analisador aceita apenas funções declarados com "def" e retornadas por instruções
+"return"
+
+Caso sejam utilizadas variáveis globais dentro de uma função, deve-se utilizar o
+comando global para que o AnalisadorFuncoes.py funcione corretamente
+
+Caso uma função manipule arquivos externos, o arquivo deve ser aberto, manipulado
+completamente e fechado dentro dessa mesma função. O arquivo não pode ser aberto
+em uma função e passado como parâmetro para outras funções.
+Tendo em vista que o código a ser analisado deva preencher esse requisito, o 
+arquivo "AnalisadorFuncoes.py" apenas irá verificar se existe dentro da função
+o comando "open()" que é responsável por abrir um arquivo externo. Os demais
+comandos de manipulação de arquivos externos não precisarão ser analisados.
+
+Todas as funções que instanciam objetos são marcadas como não determinísticas.
+pelas razões abaixo:
+    i)O método construtor obrigatoriamente deve retornar None (não é compatível
+        com o IntPy)
+    
+    ii)Todos os métodos que utilizam algum atributo do objeto em seu processamento
+        precisam ser classificados como não determinísticos. A utilização dos
+        atributos pode ter dois fins: atualizar ou verificar o valor. Assim, se a
+        função for colocada no cache, os atributos do objeto não sofrerão as
+        atualizações que o processamento faria e, como o valor dos atributos pode
+        mudar entre duas chamadas do método, as verificações do valor precisam ser
+        executadas, não podendo ser usado o valor no cache.
+    
+    iii)Métodos que não manipulam nenhum atributo de um objeto teoricamente deveriam
+        ser declarados como funções.
+Para identificar que um objeto está sendo instanciado de uma classe. Todas as classes
+devem ser declaradas com a primeira letra maiúscula e devem ser os únicos elementos
+declarados dessa forma.
+
+É responsabilidade do usuário verificar se o código não fere algumas das limitações do IntPy:
+    1)As tuplas podem ser passadas como parâmetros e retornadas por funções.
+    2)As listas e dicionários podem ser passados como parâmetros para funções ou retornados por funções.
+    Todavia, no caso de serem passados como parâmetros, não é possível alterar seus elementos
+    dentro da função pois, o IntPy resultará em erro.
+    3)O retorno de uma função não pode ser uma chamada para outra função. Caso seja, o IntPy
+    resultará em erro.
+
+Em todas as funções que manipulam objetos, sejam eles instâncias de classes definidas dentro
+do script ou instâncias de classes importadas com o comando \"import\", o usuário deve verificar
+se, no código da função, são chamados métodos que não são determinísticos. Em caso afirmativo,
+essas funções devem ser marcadas como não determinísticas.
+
+Todas as funções que recebem objetos como parâmetro e utilizam algum de seus atributos devem ser marcadas como não determinísticas.
+
+O usuário sempre deve verificar se as funções classificadas pelo analisador como determinísticas
+de fato o são, pois o analisador pode conter erros.
+
+###########ERROS IDENTIFICADOS QUE SERÃO CORRIGIDOS###########################
+Não é possível, dentro de uma função, chamar duas ou mais funções em uma mesma
+linha (ex.: a().b()) devido ao modo de analisar as funções ND. Provavelmente
+devido também à forma como o grafo de funções é construído.
+##############################FUTURO##########################################
+Tópicos que julgo interessante para aprimorar:
+
+    REVISAR O CÓDIGO PARA SIMPLIFICÁ-LO
+
+    Estudar módulo optparse para objetos
+
+    Aperfeiçoar determinação de funções não determinísticas
+
+    Aperfeiçoar determinação de funções que não funcionam com o IntPy
