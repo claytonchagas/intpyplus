@@ -18,7 +18,8 @@ class Test:
 
 @deterministic
 def fib(n):
-    if n == 1 or n == 0:
+    #if n == 1 or n == 0:
+    if n < 2:
         return n
 
     return fib(n-1) + fib(n-2)
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     # start = timeit.timeit()
     # start = time.clock()
     start = time.time()
-    print(fib(100))
+    print(fib(198))
     # end = timeit.timeit()
     # end = time.clock()
     end = time.time()
